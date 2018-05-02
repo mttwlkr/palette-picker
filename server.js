@@ -14,67 +14,32 @@ app.set('port', process.env.PORT || 3000);
 
 app.locals.title = 'Palette Picker';
 
-// app.locals.projects = [
-//   {
-//     primaryKey: 5,
-//     projectName: 'lol cats'
-//   },
-//   {
-//     primaryKey: 7,
-//     projectName: 'School Project'
-//   }
-// ]
-
-// app.locals.palettes = [
-//   {
-//     primaryKey: 1,
-//     foreignKey: 7,
-//     paletteName: "Warm Colors",
-//     color1: "#FF220C",
-//     color2: "#D33E43",
-//     color3: "#9B7874",
-//     color4: "#666370",
-//     color5: "#1C1F33"
-//   },
-//   {
-//     primaryKey: 2,
-//     foreignKey: 7,
-//     paletteName: "Cold Colors",
-//     color1: "#73B4D8",
-//     color2: "#24C65D",
-//     color3: "#3FBA66",
-//     color4: "#9F041C",
-//     color5: "#C10750"
-//   }  
-// ]
-
-app.post('/api/v1/new-palette', (request, response) => {
-  // const palettes = app.locals.palettes;
-  // const userInfo = request.body;
-
-  // const primaryKey = palettes.length + 1;
-  // const foreignKey = 5;
-  // const newPalette = { ...userInfo, primaryKey, foreignKey }
-
-  if (!userInfo.paletteName) {
-    return response.status(422).send({Error: "No Project Name"})
-  } else {
-    palettes.push(newPalette)
-    return response.status(201).json({status: "IT WORKED!"})
+app.post('/api/v1/projects', (request, response) => {
+  if (!request.body) {
+    return response.status(422).send({ error: 'No Project Name' })
   }
+
+  database('projects').insert(request.body, 'id')
+    .then( project => {
+      response.status(201).json({ id: project[0] })
+    })
+    .catch( error => {
+      response.status(500).json({ error })
+    })
 })
 
-app.post('/api/v1/new-project', (request, response) => {
-  // const { projectName } = request.body;
-  // const projects = app.locals.projects
-  // const primaryKey = projects.length + 1;
-  // const newProject = { primaryKey, projectName }
-  if (!projectName) {
+app.post('/api/v1/palettes', (request, response) => {
+  if (!request.body) {
     return response.status(422).send({Error: "No Project Name"})
-  } else {
-    projects.push(newProject)
-    return response.status(200).json({"New Project Added": projectName })
   }
+
+  database('palettes').insert(request.body, 'id')
+    .then( palette => {
+      response.status(201).json({ id: palette[0] })
+    })
+    .catch( error => {
+      response.status(500).json({ error })
+    })
 })
 
 app.get('/', (request, response) => {

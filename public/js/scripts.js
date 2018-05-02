@@ -26,6 +26,11 @@ function getTiles() {
   return [tile1, tile2, tile3, tile4, tile5];
 }
 
+function getCurrentProject() {
+  const currentProjectId = $("#existing-project-options").find(":selected").val();
+  return currentProjectId
+}
+
 function newColors() {
   const tiles = getTiles();
   tiles.forEach(tile => {
@@ -38,7 +43,6 @@ function newColors() {
 }
 
 function existingProjects(singleProject) {
-  console.log(singleProject)
   const project = singleProject.palettes.map( palette => {
     return (`<li class='palette-thumbnail'>
       <p>${palette.palette_name}</p>
@@ -86,25 +90,27 @@ async function fetchPalettes() {
   return palettes
 }
 
-function saveProject() {
+async function saveProject() {
   event.preventDefault();
-  const userInput = $('#projectName-input').val();
-  const data = { projectName: userInput }
-  fetch('http://localhost:3000/api/v1/new-project', {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json"
-    },
-  }).then(response => response.json())
-  .catch(error => console.error('Error:', error))
-  .then(response => console.log('Success:', response));
+  const projectName = { project_name: $('#projectName-input').val()};
+  try {
+    const response = await fetch('/api/v1/projects', {
+      method: "POST",
+      body: JSON.stringify(projectName),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+    const data = await response.json()
+  } catch (error) {
+    throw error
+  }
 }
 
 function addSelect(projects) {
   $.each(projects, (index, project) => {
     $('#existing-project-options').append($(`<option>`, {
-      value: project.project_name,
+      value: project.id,
       text: project.project_name
     }))
   })
@@ -112,21 +118,22 @@ function addSelect(projects) {
 
 function savePalette(event) {
   event.preventDefault();
-  const paletteName = $('#paletteName-input').val();
+  const palette_name = $('#paletteName-input').val();
+  const project_id = getCurrentProject();
   const tiles = getTiles();
   const color1 = tiles[0].text();
   const color2 = tiles[1].text();
   const color3 = tiles[2].text();
   const color4 = tiles[3].text();
   const color5 = tiles[4].text();
-  const data = { paletteName, color1, color2, color3, color4, color5 }
-  sendPalette(data)
+  const newPalette = { palette_name, project_id, color1, color2, color3, color4, color5 }
+  sendPalette(newPalette)
 }
 
-function sendPalette(data) {
-  fetch('http://localhost:3000/api/v1/new-palette', {
+function sendPalette(newPalette) {
+  fetch('http://localhost:3000/api/v1/palettes', {
     method: "POST",
-    body: JSON.stringify(data),
+    body: JSON.stringify(newPalette),
     headers: {
       "Content-Type": "application/json"
     },
