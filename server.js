@@ -71,7 +71,7 @@ app.post('/api/v1/new-project', (request, response) => {
     return response.status(422).send({Error: "No Project Name"})
   } else {
     projects.push(newProject)
-    return response.status(200).json({ projectName })
+    return response.status(200).json({ItWoRkEd: projectName })
   }
 })
 

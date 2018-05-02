@@ -1,6 +1,6 @@
 $('#new-palette-button').click(newColors)
 $('.color-tile').click(lock)
-// $('#new-palette-button').click(fetchProjects)
+$('#new-project-button').click(saveProject)
 
 $('body').keyup(function (event) {
   if (event.keyCode === 32) {
@@ -36,12 +36,14 @@ function newColors() {
   })
 }
 
-function thumbnailColors(hexArray) {
-  const thumbnailColorDiv = hexArray.map( hex => {
-    return (`<div class='thumbnail-color' style='background-color:${hex};'></div>`)
-  })
-  return thumbnailColorDiv
-}
+
+
+// function thumbnailColors(hexArray) {
+//   const thumbnailColorDiv = hexArray.map( hex => {
+//     return (`<div class='thumbnail-color' style='background-color:${hex};'></div>`)
+//   })
+//   return thumbnailColorDiv
+// }
 
 function existingProjects(singleProject) {
   const project = singleProject.palettes.map( palette => {
@@ -88,6 +90,21 @@ async function fetchPalettes() {
   const response = await fetch('http://localhost:3000/api/v1/palettes')
   const palettes = await response.json()
   return palettes
+}
+
+function saveProject() {
+  event.preventDefault();
+  const userInput = $('#projectName-input').val();
+  const data = {projectName: userInput}
+  fetch('http://localhost:3000/api/v1/new-project', {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
+    },
+  }).then(response => response.json())
+  .catch(error => console.error('Error:', error))
+  .then(response => console.log('Success:', response));
 }
 
 $(document).ready( () => {
