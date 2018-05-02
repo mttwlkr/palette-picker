@@ -38,9 +38,10 @@ function newColors() {
 }
 
 function existingProjects(singleProject) {
+  console.log(singleProject)
   const project = singleProject.palettes.map( palette => {
     return (`<li class='palette-thumbnail'>
-      <p>${palette.paletteName}</p>
+      <p>${palette.palette_name}</p>
       <div class='thumbnail-color-div'>
         <div class='thumbnail-color' style='background-color:${palette.color1};'></div>
         <div class='thumbnail-color' style='background-color:${palette.color2};'></div>
@@ -59,7 +60,7 @@ async function appendProjects() {
   const palettes = await fetchPalettes()
 
   const projectsWithPalettes = projects.reduce((acc, curr) => {
-    const filtered = palettes.filter( palette => {return palette.foreignKey === curr.primaryKey})
+    const filtered = palettes.filter( palette => {return palette.project_id === curr.id})
     curr.palettes = [...filtered]
     acc.push(curr)
     return acc
@@ -103,8 +104,8 @@ function saveProject() {
 function addSelect(projects) {
   $.each(projects, (index, project) => {
     $('#existing-project-options').append($(`<option>`, {
-      value: project.projectName,
-      text: project.projectName
+      value: project.project_name,
+      text: project.project_name
     }))
   })
 }
