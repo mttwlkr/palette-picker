@@ -1,14 +1,13 @@
 $('#new-palette-button').click(newColors)
 $('.color-tile').click(lock)
-$('#new-project-button').click(saveProject)
-$('#new-palette-button').click(savePalette)
-// $('#new-palette-button').click((event) => {savePalette(event)})
+$('#save-project-button').click(saveProject)
+$('#save-palette-button').click(savePalette)
 
-$('body').keyup(function (event) {
-  if (event.keyCode === 32) {
-    newColors()
-  }
-})
+// $('body').keyup(function (event) {
+//   if (event.keyCode === 32) {
+//     newColors()
+//   }
+// })
 
 function generateRandomColor() {
   return '#'+Math.floor(Math.random()*16777215).toString(16)
@@ -102,25 +101,24 @@ function saveProject() {
 }
 
 function addSelect(projects) {
-  var options = '';
-  $.each(projects, function(index, project) {
-    options += '<option value="' + project.projectName + '" text="' + project.projectName + '" />';
-  });
-  $('#existing-project-options').append(options);
+  $.each(projects, (index, project) => {
+    $('#existing-project-options').append($(`<option>`, {
+      value: project.projectName,
+      text: project.projectName
+    }))
+  })
 }
 
 function savePalette(event) {
   event.preventDefault();
-  const userTitle = $('#paletteName-input').val();
-  const palleteName = $('#existing-project-options').val();
-  // somehow get palletNumber (foreign Key)
+  const paletteName = $('#paletteName-input').val();
   const tiles = getTiles();
-  const color1 = tiles[0];
-  const color2 = tiles[1];
-  const color3 = tiles[2];
-  const color4 = tiles[3];
-  const color5 = tiles[4];
-  const data = { palleteName, color1, color2, color3, color4, color5 }
+  const color1 = tiles[0].text();
+  const color2 = tiles[1].text();
+  const color3 = tiles[2].text();
+  const color4 = tiles[3].text();
+  const color5 = tiles[4].text();
+  const data = { paletteName, color1, color2, color3, color4, color5 }
   sendPalette(data)
 }
 

@@ -45,22 +45,18 @@ app.locals.palettes = [
 ]
 
 app.post('/api/v1/new-palette', (request, response) => {
-  const userInfo = request.body;
-
-  console.log(userInfo)
-
   const palettes = app.locals.palettes;
+  const userInfo = request.body;
 
   const primaryKey = palettes.length + 1;
   const foreignKey = 5;
-
   const newPalette = { ...userInfo, primaryKey, foreignKey }
 
   if (!userInfo.paletteName) {
     return response.status(422).send({Error: "No Project Name"})
   } else {
     palettes.push(newPalette)
-    return response.status(201).send("IT WORKED!")
+    return response.status(201).json({status: "IT WORKED!"})
   }
 })
 
@@ -68,7 +64,7 @@ app.post('/api/v1/new-project', (request, response) => {
   const { projectName } = request.body;
   const projects = app.locals.projects
   const primaryKey = projects.length + 1;
-  const newProject = Object.assign({}, {primaryKey: primaryKey }, { projectName: projectName } );
+  const newProject = { primaryKey, projectName }
   if (!projectName) {
     return response.status(422).send({Error: "No Project Name"})
   } else {
