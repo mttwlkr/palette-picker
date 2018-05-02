@@ -1,0 +1,62 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Palette Picker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+
+    <h1>Palette Picker</h1>
+    <section class="color-palette-section">
+      <div class="color-tile" id="tile-1"></div>
+      <div class="color-tile" id="tile-2"></div>
+      <div class="color-tile" id="tile-3"></div>
+      <div class="color-tile" id="tile-4"></div>
+      <div class="color-tile" id="tile-5"></div>
+    </section>
+    <section>
+      <button id="new-palette-button">Generate New Palette!</button>
+      <form>
+        <select name="text">
+          <option value="value1">Project 1</option> 
+        </select>
+        <input 
+          type="text" 
+          name="palette"
+          placeholder="Palette Name...">
+        <button id="new-palette-button">
+          Save Palette
+        </button>
+      </form>
+    </section>
+
+    <section>
+      <form>
+        <label>
+          Create A New Project:
+          <input 
+            type="text" 
+            name=""
+            placeholder="New Project Name...">
+        </label>
+        <button>
+          Save Project
+        </button>
+      </form>
+    </section>
+
+    <section class='existing-projects'>
+    </section>
+
+    <script 
+      src="https://code.jquery.com/jquery-3.3.1.min.js" 
+      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" 
+      crossorigin="anonymous">
+    </script>
+    <script src="js/scripts.js"></script>
+  </body>
+</html>
+
