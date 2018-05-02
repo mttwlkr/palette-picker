@@ -26,33 +26,39 @@ app.locals.palettes = [
     primaryKey: 1,
     foreignKey: 7,
     paletteName: "Warm Colors",
-    "color1": '#FF220C',
-    "color2": '#D33E43',
-    "color3": '#9B7874',
-    "color4": '#666370',
-    "color5": '#1C1F33'
+    color1: "#FF220C",
+    color2: "#D33E43",
+    color3: "#9B7874",
+    color4: "#666370",
+    color5: "#1C1F33"
   },
   {
     primaryKey: 2,
     foreignKey: 7,
     paletteName: "Cold Colors",
-    "color1": '#73B4D8',
-    "color2": '#24C65D',
-    "color3": '#3FBA66',
-    "color4": '#9F041C',
-    "color5": '#C10750'
+    color1: "#73B4D8",
+    color2: "#24C65D",
+    color3: "#3FBA66",
+    color4: "#9F041C",
+    color5: "#C10750"
   }  
 ]
 
 app.post('/api/v1/new-palette', (request, response) => {
-  const { paletteName, palette } = request.body;
-  const palettes = app.locals.palettes
+
+  const userInfo = request.body;
+  const palettes = app.locals.palettes;
+
   const primaryKey = palettes.length + 1;
-  const newPalette = Object.assign({}, { paletteName: paletteName }, { palette: palette })
-  if (!paletteName) {
+  const foreignKey = 5;
+
+  const newPalette = { ...userInfo, primaryKey, foreignKey }
+
+  if (!userInfo.paletteName) {
     return response.status(422).send({Error: "No Project Name"})
   } else {
     palettes.push(newPalette)
+    return response.status(201).send("IT WORKED!")
   }
 })
 
