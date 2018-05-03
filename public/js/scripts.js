@@ -2,6 +2,7 @@ $('#new-palette-button').click(newColors)
 $('.color-tile').click(lock)
 $('#save-project-button').click(saveProject)
 $('#save-palette-button').click(savePalette)
+$('.existing-projects').on('click', '#delete-thumbnail-button', deletePalette)
 
 // $('body').keyup(function (event) {
 //   if (event.keyCode === 32) {
@@ -42,9 +43,9 @@ function newColors() {
   })
 }
 
-function existingProjects(singleProject) {
-  const project = singleProject.palettes.map( palette => {
-    return (`<li class='palette-thumbnail'>
+function existingProjects(projectArray) {
+  const project = projectArray.palettes.map( palette => {
+    return (`<li class='palette-thumbnail' id='${palette.id}'>
       <p>${palette.palette_name}</p>
       <div class='thumbnail-color-div'>
         <div class='thumbnail-color' style='background-color:${palette.color1};'></div>
@@ -53,13 +54,13 @@ function existingProjects(singleProject) {
         <div class='thumbnail-color' style='background-color:${palette.color4};'></div>
         <div class='thumbnail-color' style='background-color:${palette.color5};'></div>
       </div>
-      <button class='delete-thumbnail-button'>X</button> 
+      <button id='delete-thumbnail-button'>X</button> 
       </li>`)
   }).join(' ')
   return project
 }
 
-async function appendProjects() {
+async function loadProjects() {
   const projects = await fetchProjects()
   const palettes = await fetchPalettes()
 
@@ -74,7 +75,11 @@ async function appendProjects() {
     return existingProjects(singleProject)
   }).join(' ')
 
-  $('.existing-projects').append(`<ul>${displayProjects}</ul>`)
+  appendProjects(displayProjects)
+}
+
+function appendProjects(projects) {
+  $('.existing-projects').append(`<ul>${projects}</ul>`)
 }
 
 async function fetchProjects() {
@@ -118,17 +123,34 @@ async function saveProject() {
 }
 
 function addSelect(projects) {
-  $('#existing-project-options').empty()
-  $.each(projects, (index, project) => {
-    $('#existing-project-options').append($(`<option>`, {
-      value: project.id,
-      text: project.project_name
-    }))
+  if (!projects.length) {
+    $('#existing-project-options').append(`<option>Please make a project!</option>`)
+  } else {
+    $('#existing-project-options').empty()
+    $.each(projects, (index, project) => {
+      $('#existing-project-options').append($(`<option>`, {
+        value: project.id,
+        text: project.project_name
+      }))
+    })   
+  }
+}
+
+async function deletePalette() {
+  const paletteID = {id : $(this).parent('li').attr('id')}
+  $(this).parent('li').remove()
+  const response = await fetch('/api/v1/palettes', {
+    method: "DELETE",
+    body: JSON.stringify(paletteID),
+    headers: {
+      "Content-Type": "application/json"
+    },
   })
+  const responseID = response.json()
 }
 
 function addSingleSelect(projectName, projectID) {
-  $('#existing-project-options').append(`<option value='${projectID}'>${projectName.project_name}</option>`)
+  $('#existing-project-options').append(`<option selected='selected' value='${projectID}'>${projectName.project_name}</option>`)
 }
 
 function savePalette(event) {
@@ -143,6 +165,7 @@ function savePalette(event) {
   const color5 = tiles[4].text();
   const newPalette = { palette_name, project_id, color1, color2, color3, color4, color5 }
   sendPalette(newPalette)
+  return newPalette;
 }
 
 async function sendPalette(newPalette) {
@@ -153,11 +176,26 @@ async function sendPalette(newPalette) {
       "Content-Type": "application/json"
     },
   })
-  const data = await response.json()
-  console.log(data)
+  const new_palette = await response.json()
+  await singleProject(new_palette)
+}
+
+function singleProject(newPalette) {
+  const formatted = (`<li class='palette-thumbnail' id='${newPalette.new_palette.id}'>
+    <p>${newPalette.new_palette.palette_name}</p>
+    <div class='thumbnail-color-div'>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color1};'></div>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color2};'></div>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color3};'></div>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color4};'></div>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color5};'></div>
+    </div>
+    <button id='delete-thumbnail-button'>X</button> 
+    </li>`)
+  appendProjects(formatted)
 }
 
 $(document).ready( () => {
   newColors()
-  appendProjects()
+  loadProjects()
 });

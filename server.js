@@ -14,6 +14,10 @@ app.set('port', process.env.PORT || 3000);
 
 app.locals.title = 'Palette Picker';
 
+app.get('/', (request, response) => {
+  app.use(express.static(path.join(__dirname, 'public')));
+})
+
 app.post('/api/v1/projects', (request, response) => {
   if (!request.body) {
     return response.status(422).send({ error: 'No Project Name' })
@@ -28,24 +32,6 @@ app.post('/api/v1/projects', (request, response) => {
     })
 })
 
-app.post('/api/v1/palettes', (request, response) => {
-  if (!request.body) {
-    return response.status(422).send({Error: "No Project Name"})
-  }
-
-  database('palettes').insert(request.body, 'id')
-    .then( palette => {
-      response.status(201).json({ id: palette[0] })
-    })
-    .catch( error => {
-      response.status(500).json({ error })
-    })
-})
-
-app.get('/', (request, response) => {
-  app.use(express.static(path.join(__dirname, 'public')));
-})
-
 app.get('/api/v1/projects', (request, response) => {
   database('projects').select()
     .then((projects) => {
@@ -56,10 +42,39 @@ app.get('/api/v1/projects', (request, response) => {
     });
 })
 
+app.post('/api/v1/palettes', (request, response) => {
+  if (!request.body) {
+    return response.status(422).send({Error: "No Project Name"})
+  }
+
+  database('palettes').insert(request.body, ['id', 'palette_name', 'project_id', 'color1', 'color2', 'color3', 'color4', 'color5'])
+    .then( palette => {
+      response.status(201).json({ 
+        new_palette: palette[0]
+      })
+    })
+    .catch( error => {
+      response.status(500).json({ error })
+    })
+})
+
 app.get('/api/v1/palettes', (request, response) => {
   database('palettes').select()
     .then((palettes) => {
       response.status(200).json(palettes)
+    })
+    .catch((error) => {
+      response.status(500).json({ error })
+    })
+})
+
+app.delete('/api/v1/palettes', (request, response) => {
+  const { id } = request.body
+  database('palettes')
+    .where({ 'id': id })
+    .del()
+    .then((palette) => {
+      response.status(204).json(palette)
     })
     .catch((error) => {
       response.status(500).json({ error })
