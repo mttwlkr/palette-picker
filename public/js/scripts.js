@@ -92,28 +92,43 @@ async function fetchPalettes() {
 
 async function saveProject() {
   event.preventDefault();
-  const projectName = { project_name: $('#projectName-input').val()};
-  try {
-    const response = await fetch('/api/v1/projects', {
-      method: "POST",
-      body: JSON.stringify(projectName),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-    const data = await response.json()
-  } catch (error) {
-    throw error
+  const userInput = $('#projectName-input').val();
+  const currentProjects = await fetchProjects();
+  const alreadyExists = currentProjects.filter( project => {return project.project_name === userInput})
+  
+  if (!alreadyExists.length) {
+    const projectName = { project_name: $('#projectName-input').val() };
+    try {
+      const response = await fetch("/api/v1/projects", {
+        method: "POST",
+        body: JSON.stringify(projectName),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      const data = await response.json()
+      const newProjectID = await data.id
+      addSingleSelect(projectName, newProjectID)
+    } catch (error) {
+      throw error
+    }
+  } else {
+    alert('That project name is already taken! Please choose another project name!')
   }
 }
 
 function addSelect(projects) {
+  $('#existing-project-options').empty()
   $.each(projects, (index, project) => {
     $('#existing-project-options').append($(`<option>`, {
       value: project.id,
       text: project.project_name
     }))
   })
+}
+
+function addSingleSelect(projectName, projectID) {
+  $('#existing-project-options').append(`<option value='${projectID}'>${projectName.project_name}</option>`)
 }
 
 function savePalette(event) {
@@ -130,16 +145,16 @@ function savePalette(event) {
   sendPalette(newPalette)
 }
 
-function sendPalette(newPalette) {
-  fetch('http://localhost:3000/api/v1/palettes', {
+async function sendPalette(newPalette) {
+  const response = await fetch('http://localhost:3000/api/v1/palettes', {
     method: "POST",
     body: JSON.stringify(newPalette),
     headers: {
       "Content-Type": "application/json"
     },
-  }).then(response => response.json())
-  .catch(error => console.error('Error:', error))
-  .then(response => console.log('Success:', response));
+  })
+  const data = await response.json()
+  console.log(data)
 }
 
 $(document).ready( () => {
