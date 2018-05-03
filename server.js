@@ -3,6 +3,10 @@ const app = express();
 const path = require('path');
 const bodyParser = require('body-parser');
 
+const environment = process.env.NODE_ENV || 'development';
+const configuration = require('./knexfile')[environment];
+const database = require('knex')(configuration);
+
 app.use(express.static('public'))
 app.use(bodyParser.json())
 
@@ -10,77 +14,71 @@ app.set('port', process.env.PORT || 3000);
 
 app.locals.title = 'Palette Picker';
 
-app.locals.projects = [
-  {
-    primaryKey: 5,
-    projectName: 'lol cats'
-  },
-  {
-    primaryKey: 7,
-    projectName: 'School Project'
-  }
-]
-
-app.locals.palettes = [
-  {
-    primaryKey: 1,
-    foreignKey: 7,
-    paletteName: "Warm Colors",
-    "color1": '#FF220C',
-    "color2": '#D33E43',
-    "color3": '#9B7874',
-    "color4": '#666370',
-    "color5": '#1C1F33'
-  },
-  {
-    primaryKey: 2,
-    foreignKey: 7,
-    paletteName: "Cold Colors",
-    "color1": '#73B4D8',
-    "color2": '#24C65D',
-    "color3": '#3FBA66',
-    "color4": '#9F041C',
-    "color5": '#C10750'
-  }  
-]
-
-app.post('/api/v1/new-palette', (request, response) => {
-  const { paletteName, palette } = request.body;
-  const palettes = app.locals.palettes
-  const primaryKey = palettes.length + 1;
-  const newPalette = Object.assign({}, { paletteName: paletteName }, { palette: palette })
-  if (!paletteName) {
-    return response.status(422).send({Error: "No Project Name"})
-  } else {
-    palettes.push(newPalette)
-  }
-})
-
-app.post('/api/v1/new-project', (request, response) => {
-  const { projectName } = request.body;
-  const projects = app.locals.projects
-  const primaryKey = projects.length + 1;
-  const newProject = Object.assign({}, {primaryKey: primaryKey }, { projectName: projectName } );
-  if (!projectName) {
-    return response.status(422).send({Error: "No Project Name"})
-  } else {
-    projects.push(newProject)
-    return response.status(200).json({ projectName })
-  }
-})
-
 app.get('/', (request, response) => {
   app.use(express.static(path.join(__dirname, 'public')));
 })
 
+app.post('/api/v1/projects', (request, response) => {
+  if (!request.body) {
+    return response.status(422).send({ error: 'No Project Name' })
+  }
+
+  database('projects').insert(request.body, 'id')
+    .then( project => {
+      response.status(201).json({ id: project[0] })
+    })
+    .catch( error => {
+      response.status(500).json({ error })
+    })
+})
+
 app.get('/api/v1/projects', (request, response) => {
-  let projects = app.locals.projects;
-  response.status(200).json(projects)
+  database('projects').select()
+    .then((projects) => {
+      response.status(200).json(projects);
+    })
+    .catch((error) => {
+      response.status(500).json({ error });
+    });
+})
+
+app.post('/api/v1/palettes', (request, response) => {
+  if (!request.body) {
+    return response.status(422).send({Error: "No Project Name"})
+  }
+
+  database('palettes').insert(request.body, ['id', 'palette_name', 'project_id', 'color1', 'color2', 'color3', 'color4', 'color5'])
+    .then( palette => {
+      response.status(201).json({ 
+        new_palette: palette[0]
+      })
+    })
+    .catch( error => {
+      response.status(500).json({ error })
+    })
 })
 
 app.get('/api/v1/palettes', (request, response) => {
-  let palettes = app.locals.palettes;
-  response.status(200).json(palettes)
+  database('palettes').select()
+    .then((palettes) => {
+      response.status(200).json(palettes)
+    })
+    .catch((error) => {
+      response.status(500).json({ error })
+    })
+})
+
+app.delete('/api/v1/palettes', (request, response) => {
+  const { id } = request.body
+  database('palettes')
+    .where({ 'id': id })
+    .del()
+    .then((palette) => {
+      response.status(204).json(palette)
+    })
+    .catch((error) => {
+      response.status(500).json({ error })
+    })
 })
 
 app.listen(app.get('port'), () => {

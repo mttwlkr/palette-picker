@@ -1,12 +1,14 @@
 $('#new-palette-button').click(newColors)
 $('.color-tile').click(lock)
-// $('#new-palette-button').click(fetchProjects)
+$('#save-project-button').click(saveProject)
+$('#save-palette-button').click(savePalette)
+$('.existing-projects').on('click', '#delete-thumbnail-button', deletePalette)
 
-$('body').keyup(function (event) {
-  if (event.keyCode === 32) {
-    newColors()
-  }
-})
+// $('body').keyup(function (event) {
+//   if (event.keyCode === 32) {
+//     newColors()
+//   }
+// })
 
 function generateRandomColor() {
   return '#'+Math.floor(Math.random()*16777215).toString(16)
@@ -25,6 +27,11 @@ function getTiles() {
   return [tile1, tile2, tile3, tile4, tile5];
 }
 
+function getCurrentProject() {
+  const currentProjectId = $("#existing-project-options").find(":selected").val();
+  return currentProjectId
+}
+
 function newColors() {
   const tiles = getTiles();
   tiles.forEach(tile => {
@@ -36,17 +43,10 @@ function newColors() {
   })
 }
 
-function thumbnailColors(hexArray) {
-  const thumbnailColorDiv = hexArray.map( hex => {
-    return (`<div class='thumbnail-color' style='background-color:${hex};'></div>`)
-  })
-  return thumbnailColorDiv
-}
-
-function existingProjects(singleProject) {
-  const project = singleProject.palettes.map( palette => {
-    return (`<li class='palette-thumbnail'>
-      <p>${palette.paletteName}</p>
+function existingProjects(projectArray) {
+  const project = projectArray.palettes.map( palette => {
+    return (`<li class='palette-thumbnail' id='${palette.id}'>
+      <p>${palette.palette_name}</p>
       <div class='thumbnail-color-div'>
         <div class='thumbnail-color' style='background-color:${palette.color1};'></div>
         <div class='thumbnail-color' style='background-color:${palette.color2};'></div>
@@ -54,18 +54,18 @@ function existingProjects(singleProject) {
         <div class='thumbnail-color' style='background-color:${palette.color4};'></div>
         <div class='thumbnail-color' style='background-color:${palette.color5};'></div>
       </div>
-      <button class='delete-thumbnail-button'>X</button> 
+      <button id='delete-thumbnail-button'>X</button> 
       </li>`)
   }).join(' ')
   return project
 }
 
-async function appendProjects() {
+async function loadProjects() {
   const projects = await fetchProjects()
   const palettes = await fetchPalettes()
 
   const projectsWithPalettes = projects.reduce((acc, curr) => {
-    const filtered = palettes.filter( palette => {return palette.foreignKey === curr.primaryKey})
+    const filtered = palettes.filter( palette => {return palette.project_id === curr.id})
     curr.palettes = [...filtered]
     acc.push(curr)
     return acc
@@ -75,12 +75,17 @@ async function appendProjects() {
     return existingProjects(singleProject)
   }).join(' ')
 
-  $('.existing-projects').append(`<ul>${displayProjects}</ul>`)
+  appendProjects(displayProjects)
+}
+
+function appendProjects(projects) {
+  $('.existing-projects').append(`<ul>${projects}</ul>`)
 }
 
 async function fetchProjects() {
   const response = await fetch('http://localhost:3000/api/v1/projects')
   const projects = await response.json()
+  addSelect(projects)
   return projects
 }
 
@@ -90,7 +95,107 @@ async function fetchPalettes() {
   return palettes
 }
 
+async function saveProject() {
+  event.preventDefault();
+  const userInput = $('#projectName-input').val();
+  const currentProjects = await fetchProjects();
+  const alreadyExists = currentProjects.filter( project => {return project.project_name === userInput})
+  
+  if (!alreadyExists.length) {
+    const projectName = { project_name: $('#projectName-input').val() };
+    try {
+      const response = await fetch("/api/v1/projects", {
+        method: "POST",
+        body: JSON.stringify(projectName),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      const data = await response.json()
+      const newProjectID = await data.id
+      addSingleSelect(projectName, newProjectID)
+    } catch (error) {
+      throw error
+    }
+  } else {
+    alert('That project name is already taken! Please choose another project name!')
+  }
+}
+
+function addSelect(projects) {
+  if (!projects.length) {
+    $('#existing-project-options').append(`<option>Please make a project!</option>`)
+  } else {
+    $('#existing-project-options').empty()
+    $.each(projects, (index, project) => {
+      $('#existing-project-options').append($(`<option>`, {
+        value: project.id,
+        text: project.project_name
+      }))
+    })   
+  }
+}
+
+async function deletePalette() {
+  const paletteID = {id : $(this).parent('li').attr('id')}
+  $(this).parent('li').remove()
+  const response = await fetch('/api/v1/palettes', {
+    method: "DELETE",
+    body: JSON.stringify(paletteID),
+    headers: {
+      "Content-Type": "application/json"
+    },
+  })
+  const responseID = response.json()
+}
+
+function addSingleSelect(projectName, projectID) {
+  $('#existing-project-options').append(`<option selected='selected' value='${projectID}'>${projectName.project_name}</option>`)
+}
+
+function savePalette(event) {
+  event.preventDefault();
+  const palette_name = $('#paletteName-input').val();
+  const project_id = getCurrentProject();
+  const tiles = getTiles();
+  const color1 = tiles[0].text();
+  const color2 = tiles[1].text();
+  const color3 = tiles[2].text();
+  const color4 = tiles[3].text();
+  const color5 = tiles[4].text();
+  const newPalette = { palette_name, project_id, color1, color2, color3, color4, color5 }
+  sendPalette(newPalette)
+  return newPalette;
+}
+
+async function sendPalette(newPalette) {
+  const response = await fetch('http://localhost:3000/api/v1/palettes', {
+    method: "POST",
+    body: JSON.stringify(newPalette),
+    headers: {
+      "Content-Type": "application/json"
+    },
+  })
+  const new_palette = await response.json()
+  await singleProject(new_palette)
+}
+
+function singleProject(newPalette) {
+  const formatted = (`<li class='palette-thumbnail' id='${newPalette.new_palette.id}'>
+    <p>${newPalette.new_palette.palette_name}</p>
+    <div class='thumbnail-color-div'>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color1};'></div>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color2};'></div>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color3};'></div>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color4};'></div>
+      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color5};'></div>
+    </div>
+    <button id='delete-thumbnail-button'>X</button> 
+    </li>`)
+  appendProjects(formatted)
+}
+
 $(document).ready( () => {
   newColors()
-  appendProjects()
+  loadProjects()
 });

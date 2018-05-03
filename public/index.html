@@ -17,33 +17,36 @@
       <div class="color-tile" id="tile-4"></div>
       <div class="color-tile" id="tile-5"></div>
     </section>
+
+    <button id="new-palette-button">Generate New Palette!</button>
+
     <section>
-      <button id="new-palette-button">Generate New Palette!</button>
       <form>
-        <select name="text">
-          <option value="value1">Project 1</option> 
-        </select>
-        <input 
-          type="text" 
-          name="palette"
-          placeholder="Palette Name...">
-        <button id="new-palette-button">
-          Save Palette
+        <label>
+          Create A New Project:
+          <input
+            id="projectName-input" 
+            type="text" 
+            name="projectName"
+            placeholder="New Project Name...">
+        </label>
+        <button id="save-project-button">
+          Save Project
         </button>
       </form>
     </section>
 
     <section>
       <form>
-        <label>
-          Create A New Project:
-          <input 
-            type="text" 
-            name=""
-            placeholder="New Project Name...">
-        </label>
-        <button>
-          Save Project
+        <select id="existing-project-options">
+        </select>
+        <input
+          id="paletteName-input" 
+          type="text" 
+          name="paletteName"
+          placeholder="Palette Name...">
+        <button id="save-palette-button">
+          Save Palette
         </button>
       </form>
     </section>
