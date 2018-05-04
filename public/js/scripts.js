@@ -55,7 +55,7 @@ function existingProjects(palettes) {
 }
 
 function existingProjectDivs(project) {
-  const projectHeader = (`<div class='existing-project-thumbnail' id=${project.project_name}>
+  const projectHeader = (`<div class='existing-project-thumbnail' id=${project.project_name} data-id=${project.id}>
     <h3>${project.project_name}</h3>
     <ul>${existingProjects(project.palettes)}</ul>
     </div>`)
@@ -81,6 +81,7 @@ async function loadProjects() {
 }
 
 function appendProjects(projects) {
+  // console.log(projects)
   $('.existing-projects').append(`${projects}`)
 }
 
@@ -116,6 +117,7 @@ async function saveProject() {
       const data = await response.json()
       const newProjectID = await data.id
       addSingleSelect(projectName, newProjectID)
+      appendSingleProject(projectName, newProjectID)
     } catch (error) {
       throw error
     }
@@ -182,46 +184,38 @@ async function sendPalette(newPalette) {
   await singleProject(new_palette)
 }
 
-// async function singleProject(newPalette) {
-//   const projects = await fetchProjects();
+function appendSingleProject(projectName, newProjectID) {
+  const projectHeader = (`<div class='existing-project-thumbnail' id=${projectName.project_name} data-id=${newProjectID}>
+    <h3>${projectName.project_name}</h3>
+    <ul></ul>
+    </div>`)
+  appendProjects(projectHeader)
+}
 
-//   const projectWithPalette = projects.reduce((acc, curr) => {
-//     const filtered = palettes.filter( palette => { return palette.project_id === curr.id })
-//     curr.palettes = [...filtered]
-//     acc.push(curr)
-//     return acc
-//   }, [])
-
-//   console.log(projectWithPalette)
-
-
-  // const formatted = (`<li class='palette-thumbnail' id='${newPalette.new_palette.id}'>
-  //   <p>${newPalette.new_palette.palette_name}</p>
-  //   <div class='thumbnail-color-div'>
-  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color1};'></div>
-  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color2};'></div>
-  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color3};'></div>
-  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color4};'></div>
-  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color5};'></div>
-  //   </div>
-  //   <button id='delete-thumbnail-button'>X</button> 
-  //   </li>`)
-  // appendProjects(formatted)
-// }
+function appendSinglePalette(project, newPalette) {
+  const formatted = (`<li class='palette-thumbnail' id='${newPalette.new_palette.id}'>
+  <p>${newPalette.new_palette.palette_name}</p>
+  <div class='thumbnail-color-div'>
+    <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color1};'></div>
+    <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color2};'></div>
+    <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color3};'></div>
+    <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color4};'></div>
+    <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color5};'></div>
+  </div>
+  <button id='delete-thumbnail-button'>X</button> 
+  </li>`)
+  $(project).append(formatted)
+}
 
 function singleProject(newPalette) {
-  const formatted = (`<li class='palette-thumbnail' id='${newPalette.new_palette.id}'>
-    <p>${newPalette.new_palette.palette_name}</p>
-    <div class='thumbnail-color-div'>
-      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color1};'></div>
-      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color2};'></div>
-      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color3};'></div>
-      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color4};'></div>
-      <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color5};'></div>
-    </div>
-    <button id='delete-thumbnail-button'>X</button> 
-    </li>`)
-  appendProjects(formatted)
+  const domProjects = $('.existing-project-thumbnail')
+  const domProjectArray = [...domProjects];
+  const domProject = domProjectArray.forEach( project => {
+    const theNumber = parseInt(project.dataset.id)
+    if (theNumber === newPalette.new_palette.project_id ) {
+      appendSinglePalette(project, newPalette)
+    }
+  })
 }
 
 $(document).ready( () => {
