@@ -1,22 +1,107 @@
+body {
+  background-color: #364554;
+  font-family: 'Josefin Sans', sans-serif;
+}
+
 h1 {
+  font-family: 'Merriweather', serif;
   text-align: center;
+  color: #C9FBFF;
+}
+
+select {
+  height: 50px;
 }
 
 .color-tile {
-  height: 50vh;
-  width: 20%;
+  height: 80%;
+  width: 15%;
+  border-radius: 20px;
+  box-shadow: 0px 0px 20px -3px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Josefin Sans', sans-serif;
+  text-shadow: white 0px 0px 10px;
 }
 
 .color-palette-section {
   display: flex;
+  justify-content: space-around;
+  box-shadow: 0px 0px 15px -1px black;
+  margin: 0 2em;
+  align-items: center;
+  height: 50vh;
+  border-radius: 20px;
 }
 
-section {
-  text-align: center;
+.form-section {
+  font-family: 'Josefin Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  height: 25vh;
+}
+
+.existing-projects {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  border: 1px solid #9E9E9E;
+  flex-wrap: wrap;
+  border-radius: 20px;
+  margin: 0 2em;
+  box-shadow: 0px 0px 10px -1px black;
+}
+
+.existing-project-thumbnail {
+  border: 1px solid #C9FBFF;
+  border-radius: 20px;
+  box-shadow: 0px 0px 20px -3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 1em;
+  padding: 1em;
+}
+
+button,
+label,
+input,
+select {
+  background: transparent;
+  color: #C9FBFF;
+  font-size: 1em;
+  padding: 1em;
+  border-radius: 15px;
+  font-family: 'Josefin Sans', sans-serif;
+/*  font-family: 'Merriweather', serif;*/
+}
+
+button:hover,
+input:hover,
+select:hover {
+  background: rgba(211, 211, 211, .3);
+}
+
+button,
+label,
+select {
+  border: 1px solid #efefef;
+}
+
+input::placeholder {
+  color: #efefef;
+}
+
+#projectName-input {
+  border: none;
 }
 
 .thumbnail-color {
-  height: 20px;
+  height: 30px;
   width: 20px;
 }
 
@@ -27,8 +112,40 @@ section {
 
 .thumbnail-color-div {
   display: flex;
+  margin: 0 .5em;
+}
+
+.thumbnail-palette-name {
+  padding-left: .5em;
+}
+
+.project-thumbnail-name {
+  color: #C9FBFF;
+  font-family: 'Merriweather', serif;
+}
+
+h2 {
+  text-align: center;
+  border-top: 1px solid #9E9E9E;
+  margin: 0 1.4em;
+  border-radius: 20px;
+  padding: 1em;
+  color: #C9FBFF;
 }
 
 ul {
   list-style-type: none;
+}
+
+#delete-thumbnail-button {
+  padding: .5em;
+  border: none;
+}
+
+.palette-thumbnail {
+  border: 1px solid #fff;
+  display: flex;
+  border-radius: 15px;
+  font-size: 20px;
+  color: #fff;
 }
