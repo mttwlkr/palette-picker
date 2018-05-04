@@ -65,13 +65,14 @@ async function loadProjects() {
   const palettes = await fetchPalettes()
 
   const projectsWithPalettes = projects.reduce((acc, curr) => {
-    const filtered = palettes.filter( palette => {return palette.project_id === curr.id})
+    const filtered = palettes.filter( palette => { return palette.project_id === curr.id })
     curr.palettes = [...filtered]
     acc.push(curr)
     return acc
   }, [])
 
   const displayProjects = projectsWithPalettes.map( singleProject => {
+    console.log(singleProject)
     return existingProjects(singleProject)
   }).join(' ')
 
@@ -79,6 +80,7 @@ async function loadProjects() {
 }
 
 function appendProjects(projects) {
+
   $('.existing-projects').append(`<ul>${projects}</ul>`)
 }
 
