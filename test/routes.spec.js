@@ -100,7 +100,7 @@ describe('Testing Endpoints', () => {
         lol: 'wat'
       })
       .end( (error, response ) => {
-        response.should.have.status(500)
+        response.should.have.status(422)
       })
       done()
   })
