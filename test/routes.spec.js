@@ -38,8 +38,8 @@ describe('Testing Endpoints', () => {
         response.body.should.be.an('array')
         response.body[0].should.have.property('id')
         response.body[0].id.should.equal(1)
-        done();
       })
+      done();
   })
 
   it('should post to projects', (done) => {
@@ -53,7 +53,7 @@ describe('Testing Endpoints', () => {
       done()
   })
 
-  it('should not post if the response is missing a body', () => {
+  it('should not post if the response is missing a body', (done) => {
     chai.request(app)
       .post('/api/v1/projects')
       .send({
@@ -62,6 +62,7 @@ describe('Testing Endpoints', () => {
       .end( (error, response ) => {
         response.should.have.status(500)
       })
+      done()
   })
 
   it('should post to palettes', (done) => {
@@ -92,7 +93,7 @@ describe('Testing Endpoints', () => {
       done()
   })
 
-  it('should not post if the response is missing a body', () => {
+  it('should not post if the response is missing a body', (done) => {
     chai.request(app)
       .post('/api/v1/palettes')
       .send({
@@ -101,6 +102,17 @@ describe('Testing Endpoints', () => {
       .end( (error, response ) => {
         response.should.have.status(500)
       })
+      done()
+  })
+
+  it('should delete a palette', (done) => {
+    chai.request(app)
+      .delete('/api/v1/palettes')
+      .send({ id: 1 })
+      .end( (error, response) => {
+        response.statusCode.should.equal(204)
+      })
+      done()
   })
 
   it('should respond with an array of existing palettes', (done) => {
@@ -118,7 +130,7 @@ describe('Testing Endpoints', () => {
         response.body[0].project_id.should.equal(1);
         response.body[1].should.have.property('color4');
         response.body[1].color4.should.equal("#9F041C");
-        done();
       })
+      done();
   })
 })
