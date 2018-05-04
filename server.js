@@ -12,8 +12,6 @@ app.use(bodyParser.json())
 
 app.set('port', process.env.PORT || 3000);
 
-app.locals.title = 'Palette Picker';
-
 app.get('/', (request, response) => {
   app.use(express.static(path.join(__dirname, 'public')));
 })
@@ -82,6 +80,8 @@ app.delete('/api/v1/palettes', (request, response) => {
 })
 
 app.listen(app.get('port'), () => {
-  console.log(`${app.locals.title} is running on ${app.get('port')}`)
+  console.log(`Palette Picker is running on ${app.get('port')}`)
 })
+
+module.exports = { app, database }
 
