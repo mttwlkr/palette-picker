@@ -35,6 +35,11 @@ select {
   border-radius: 20px;
 }
 
+#save-project-button,
+#save-palette-button {
+  margin-left: .3em;
+}
+
 .form-section {
   font-family: 'Josefin Sans', sans-serif;
   display: flex;
@@ -42,6 +47,7 @@ select {
   align-items: center;
   justify-content: space-around;
   height: 25vh;
+  margin: 2em 0em;
 }
 
 .existing-projects {
@@ -66,7 +72,6 @@ select {
   padding: 1em;
   border-radius: 15px;
   font-family: 'Josefin Sans', sans-serif;
-/*  font-family: 'Merriweather', serif;*/
 }
 
 button:hover,
