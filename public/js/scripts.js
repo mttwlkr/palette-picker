@@ -4,12 +4,6 @@ $('#save-project-button').click(saveProject)
 $('#save-palette-button').click(savePalette)
 $('.existing-projects').on('click', '#delete-thumbnail-button', deletePalette)
 
-// $('body').keyup(function (event) {
-//   if (event.keyCode === 32) {
-//     newColors()
-//   }
-// })
-
 function generateRandomColor() {
   return '#'+Math.floor(Math.random()*16777215).toString(16)
 }
@@ -43,8 +37,8 @@ function newColors() {
   })
 }
 
-function existingProjects(projectArray) {
-  const project = projectArray.palettes.map( palette => {
+function existingProjects(palettes) {
+  const pallete = palettes.map( palette => {
     return (`<li class='palette-thumbnail' id='${palette.id}'>
       <p>${palette.palette_name}</p>
       <div class='thumbnail-color-div'>
@@ -57,7 +51,15 @@ function existingProjects(projectArray) {
       <button id='delete-thumbnail-button'>X</button> 
       </li>`)
   }).join(' ')
-  return project
+  return pallete
+}
+
+function existingProjectDivs(project) {
+  const projectHeader = (`<div class='existing-project-thumbnail' id=${project.project_name}>
+    <h3>${project.project_name}</h3>
+    <ul>${existingProjects(project.palettes)}</ul>
+    </div>`)
+  return projectHeader
 }
 
 async function loadProjects() {
@@ -72,16 +74,14 @@ async function loadProjects() {
   }, [])
 
   const displayProjects = projectsWithPalettes.map( singleProject => {
-    console.log(singleProject)
-    return existingProjects(singleProject)
+    return existingProjectDivs(singleProject)
   }).join(' ')
 
   appendProjects(displayProjects)
 }
 
 function appendProjects(projects) {
-
-  $('.existing-projects').append(`<ul>${projects}</ul>`)
+  $('.existing-projects').append(`${projects}`)
 }
 
 async function fetchProjects() {
@@ -181,6 +181,33 @@ async function sendPalette(newPalette) {
   const new_palette = await response.json()
   await singleProject(new_palette)
 }
+
+// async function singleProject(newPalette) {
+//   const projects = await fetchProjects();
+
+//   const projectWithPalette = projects.reduce((acc, curr) => {
+//     const filtered = palettes.filter( palette => { return palette.project_id === curr.id })
+//     curr.palettes = [...filtered]
+//     acc.push(curr)
+//     return acc
+//   }, [])
+
+//   console.log(projectWithPalette)
+
+
+  // const formatted = (`<li class='palette-thumbnail' id='${newPalette.new_palette.id}'>
+  //   <p>${newPalette.new_palette.palette_name}</p>
+  //   <div class='thumbnail-color-div'>
+  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color1};'></div>
+  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color2};'></div>
+  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color3};'></div>
+  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color4};'></div>
+  //     <div class='thumbnail-color' style='background-color:${newPalette.new_palette.color5};'></div>
+  //   </div>
+  //   <button id='delete-thumbnail-button'>X</button> 
+  //   </li>`)
+  // appendProjects(formatted)
+// }
 
 function singleProject(newPalette) {
   const formatted = (`<li class='palette-thumbnail' id='${newPalette.new_palette.id}'>
