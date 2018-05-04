@@ -1,4 +1,3 @@
-
 exports.seed = function(knex, Promise) {
   return knex('palettes').del()
     .then(() => knex('projects').del())
@@ -18,14 +17,6 @@ exports.seed = function(knex, Promise) {
               project_id: project[0]
             },
             { palette_name: 'Warm Colors', 
-              color1: "#73B4D8",
-              color2: "#24C65D",
-              color3: "#3FBA66",
-              color4: "#9F041C",
-              color5: "#C10750",
-              project_id: project[0]
-            },
-            { palette_name: 'Cold Colors', 
               color1: "#73B4D8",
               color2: "#24C65D",
               color3: "#3FBA66",
