@@ -1,8 +1,9 @@
-$('#new-palette-button').click(newColors)
-$('.color-tile').click(lock)
-$('#save-project-button').click(saveProject)
-$('#save-palette-button').click(savePalette)
-$('.existing-projects').on('click', '#delete-thumbnail-button', deletePalette)
+$('#new-palette-button').click(newColors);
+$('.color-tile').click(lock);
+$('#save-project-button').click(saveProject);
+$('#save-palette-button').click(savePalette);
+$('.existing-projects').on('click', '#delete-thumbnail-button', deletePalette);
+$('.existing-projects').on('click', '.palette-thumbnail', showPalette);
 
 function generateRandomColor() {
   return "#" + Math.random().toString(16).slice(2, 8)
@@ -55,7 +56,7 @@ function existingProjects(palettes) {
 }
 
 function existingProjectDivs(project) {
-  const projectHeader = (`<div class='existing-project-thumbnail' id=${project.project_name} data-id=${project.id}>
+  const projectHeader = (`<div class='existing-project-thumbnail' id='${project.project_name}' data-id=${project.id}>
     <h3 class='project-thumbnail-name'>${project.project_name}</h3>
     ${existingProjects(project.palettes)}
     </div>`)
@@ -154,6 +155,14 @@ async function deletePalette() {
   } catch (error) {
     throw error
   }
+}
+
+function showPalette() {
+  const children = [...$(this).find('div').children()]
+  children.forEach((child, index ) => {
+    let color = $(child).attr('style').split(':')[1].replace(/[;]$/,'')
+    $(`#tile-${index}`).css(`background-color`, color).text(color)
+  })
 }
 
 function addSingleSelect(projectName, projectID) {
