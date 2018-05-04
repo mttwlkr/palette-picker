@@ -81,19 +81,18 @@ async function loadProjects() {
 }
 
 function appendProjects(projects) {
-  // console.log(projects)
   $('.existing-projects').append(`${projects}`)
 }
 
 async function fetchProjects() {
-  const response = await fetch('http://localhost:3000/api/v1/projects')
+  const response = await fetch('/api/v1/projects')
   const projects = await response.json()
   addSelect(projects)
   return projects
 }
 
 async function fetchPalettes() {
-  const response = await fetch('http://localhost:3000/api/v1/palettes')
+  const response = await fetch('/api/v1/palettes')
   const palettes = await response.json()
   return palettes
 }
@@ -178,7 +177,7 @@ function savePalette(event) {
 
 async function sendPalette(newPalette) {
   try {
-    const response = await fetch('http://localhost:3000/api/v1/palettes', {
+    const response = await fetch('/api/v1/palettes', {
     method: "POST",
     body: JSON.stringify(newPalette),
     headers: {
