@@ -45,10 +45,14 @@ select {
   font-family: 'Josefin Sans', sans-serif;
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: space-around;
   height: 25vh;
-  margin: 2em 0em;
+  margin: 2em;
+}
+
+#new-palette-button {
+  width: 50%;
+  margin: 0em auto;
 }
 
 .existing-projects {
@@ -174,4 +178,52 @@ ul {
   border-radius: 15px;
   font-size: 20px;
   color: #fff;
+}
+
+@media (max-width: 605px) {
+  
+  .color-palette-section {
+    flex-direction: column;
+    padding: 2em 0em;
+  }
+
+  .color-tile {
+    height: 18%;
+    width: 90%;
+  }
+
+  .form-section {
+    height: 30em;
+  }
+
+  .new-project-form {
+    display: flex;
+    flex-direction: column;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
+    padding-bottom: 1em;
+    padding-top: 1em;
+  }
+
+  #new-palette-button {
+    width: 100%;
+  }
+
+  .new-palette-form {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 2em;
+    border-bottom: 1px solid black;
+  }
+
+  .existing-project-thumbnail {
+    width: 100%;
+  }
+
+  #save-project-button,
+  #save-palette-button,
+  #paletteName-input {
+    margin-top: .5em;
+  }
+
 }
