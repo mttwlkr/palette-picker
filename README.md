@@ -4,7 +4,7 @@
 #### Palette Picker is the first full-stack project at Turing. I created a randomized color-picker where a user can select and save various color palettes to various projects and the data persists via a Postgres DB. This project introduced us to building and testing servers in Node with Express and Knex. We utilized Mocha and Chai testing suites for the back end. This project also reinforced my jQuery skills on the Front End. 
 
 ## Live Site
-#### [Heroku Link](https://palette-picker-mttwlkr.herokuapp.com/) 
+#### https://palette-picker-mttwlkr.herokuapp.com/
 
 ## Project Guidelines
 * PostgresQL Database
