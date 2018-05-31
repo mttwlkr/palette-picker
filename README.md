@@ -32,7 +32,8 @@
 [Matt Walker](https://github.com/mttwlkr)
 
 ## Project Layout
-
+#### Desktop
 ![Desktop](https://user-images.githubusercontent.com/30199861/40792604-972362fa-64b7-11e8-8373-da17862545da.png)
+#### Mobile
 ![Mobile](https://user-images.githubusercontent.com/30199861/40793019-935fee58-64b8-11e8-993d-e047410a9261.png)
 
