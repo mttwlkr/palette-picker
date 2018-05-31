@@ -33,5 +33,5 @@
 
 ## Project Layout
 
-![Mobile](https://user-images.githubusercontent.com/30199861/40792603-97092656-64b7-11e8-9e0f-9b1dc49bb52f.png)
+![Mobile](https://user-images.githubusercontent.com/30199861/40793019-935fee58-64b8-11e8-993d-e047410a9261.png)
 ![Desktop](https://user-images.githubusercontent.com/30199861/40792604-972362fa-64b7-11e8-8373-da17862545da.png)
